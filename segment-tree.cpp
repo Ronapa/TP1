@@ -4,18 +4,13 @@
 #include <cassert>
 #include <cstdlib>
 #include "Array.h"
+#include "leaf.h"
 
 using namespace std;
 
 typedef struct 
 {
-	double min;
-	double max;
-	double sum;
-	int index;
-	int l_bound;
-	int r_bound;
-	int valid_measures;
+	
 }leaf;
 
 class Segment_Tree
@@ -97,4 +92,49 @@ void Segment_Tree::build_Segment_Tree(int index, int l_bound, int r_bound, Array
 	return
 }
 
-	
+leaf Segment_Tree::get_value_from_segment_tree(int index , int q_left , int q_right , Array<Data> &sensor , Array<leaf> &seg_tree)	
+{
+	if (index > (number_of_values -1))
+	{
+		leaf aux;
+		int index_bis = index % number_of_values;
+		if(sensor[index_bis].is_valid() == TRUE)
+		{
+			float value1 = sensor[index_bis].get_data();
+
+			aux.min = value1;
+			aux.max = value1;
+			aux.sum = value1;
+			aux.valid_measures = 1;
+		}else
+		{
+			aux.min = INFINITE;
+			aux.max = MINUS_INFINITE;
+			aux.sum = 0;
+			aux.valid_measures = 0;
+		}
+		aux.l_bound = seg_tree[index].l_bound;
+		aux.r_bound = seg_tree[index].r_bound;
+
+		return aux;
+	}
+	if (seg_tree[index].l_bound >= q_left && seg_tree[index].r_bound <= q_right)
+	{
+		return seg_tree[index];
+	}
+	if (seg_tree[index].l_bound >= q_right)
+	{
+		leaf aux;
+		aux.min = INFINITE;
+		aux.max = MINUS_INFINITE;
+		aux.sum = 0;
+		aux.valid_measures = 0;
+		aux.l_bound = seg_tree[index].l_bound;
+		aux.r_bound = seg_tree[index].r_bound;
+	}
+	leaf aux_l, aux_r;
+
+	aux_l = get_value_from_segment_tree(index*2+1,q_left,q_right,sensor,seg_tree);
+	aux_r = get_value_from_segment_tree(index*2+2,q_left,q_right,sensor,seg_tree);
+	return aux_l|aux_r;
+}
