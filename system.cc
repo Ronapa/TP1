@@ -70,29 +70,14 @@ int System::get_amount_of_sensors_in_system()
 	return (int)sensor_array.size();
 }
 
-string System::get_sensor_in_system_at_index(const int &index)
+sensor * System::get_sensor_in_system_at_index(const int &index)
 {
-	return sensor_array[index]->get_sensor_name();
-}
-
-float System::get_average_temperature_in_range_of_sensor_at_index(const int &index , const int &left , const int &right)
-{
-	return sensor_array[index]->get_average_temperature_in_range(left,right);
-}
-
-float System::get_min_temperature_in_range_of_sensor_at_index(const int & index, const int & left, const int &right)
-{
-	return sensor_array[index]->get_min_temperature_in_range(left,right);
-}
-
-float System::get_max_temperature_in_range_of_sensor_at_index(const int & index, const int & left, const int &right)
-{
-	return sensor_array[index]->get_max_temperature_in_range(left,right);
+	return sensor_array[index];
 }
 
 float System::get_temperature_at_of_sensor_at_index(const int & index , const int &temp_index)
 {
-	return sensor_array[index]->get_temperature_at(temp_index);
+	return (sensor_array[index]->get_temperature_at(temp_index)).value;
 }
 
 int System::get_amount_of_valid_temperatures_in_range_at_index(const int & index, const int & left, const int &right)
@@ -101,30 +86,38 @@ int System::get_amount_of_valid_temperatures_in_range_at_index(const int & index
    {
       return -1;
    }
-   return sensor_array[index]->get_amount_of_valid_temperatures_in_range(left,right);
+   return (sensor_array[index]->get_amount_of_valid_temperatures_in_range(left,right));
 }
 
 std::istream & operator>>(std::istream &in, System & system)
 {
-   float measure = 0;
+   data measure;
    char ch = 0;
    int i=0;
    
-   if(!(in>>measure) || measure < INVALID_TEMPERATURE)
+   if(!(in>>measure.value))
    {
-      measure = INVALID_TEMPERATURE;
+      measure.value = 99999;
+      measure.valid = false;
+   }else
+   {
+      measure.valid = true;
    }
    system.sensor_array[i]->add_temperature_to_sensor(measure);
    while( (in >> ch) && (ch == ',') )
    {  
       i++; 
-      if(!(in>>measure) || measure < INVALID_TEMPERATURE)
+      if(!(in>>measure.value))
       {
-         measure = INVALID_TEMPERATURE;
+         measure.value = 99999;
+         measure.valid = false;
+      }else
+      {
+         measure.valid = true;
       }
       system.sensor_array[i]->add_temperature_to_sensor(measure);
    } 
-    return in;
+   return in;
 }
 
 #endif

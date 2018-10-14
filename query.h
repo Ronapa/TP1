@@ -17,22 +17,15 @@ typedef enum
 	MULTI_SENSOR
 }query_tipe_t;
 
-typedef enum 
-{
-	FALSE,
-	TRUE
-}bool_t;
-
-
 class Query
 {
 	private:
-		Array<string> sensors_in_query;
+		Array<sensor *> sensors_in_query;
 		System * target_system;
 		int left_bound , right_bound;
 		query_tipe_t type_of_query;
 		void _validate_query();
-		bool_t valid_query;
+		bool valid_query;
 
 	public:
 		Query();
@@ -48,7 +41,7 @@ class Query
 		void add_sensor_to_query(const string &);
 		
 		int get_amount_of_sensors_in_query();
-		string get_sensor_in_query_at_index(const int &);
+		sensor * get_sensor_in_query_at_index(const int &);
 		int get_left_bound();
 		int get_right_bound();
 

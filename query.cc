@@ -16,10 +16,20 @@ using namespace std;
 
 Query::Query(const string & query_name)
 {
-	sensors_in_query.push_back(query_name);
+	int i=0;
+	valid_query = false;
 	type_of_query = MONO_SENSOR;
 	left_bound = -1;
 	right_bound = -1;
+	int amount_of_sensors_in_system = target_system->get_amount_of_sensors_in_system();
+	for (i=0 ; i<amount_of_sensors_in_system ; i++)
+	{
+		if ((target_system->get_sensor_in_system_at_index(i))->get_sensor_name() == query_name)
+		{
+			sensors_in_query.push_back(target_system->get_sensor_in_system_at_index(i));
+			break;
+		}
+	}	
 }
 
 Query::Query()
@@ -92,9 +102,22 @@ void Query::set_right_bound(const string & right)
       right_bound = -1;
 }
 
-void Query::add_sensor_to_query(const string &target_of_query)
+void Query::add_sensor_to_query(const string &query_name)
 {
-	sensors_in_query.push_back(target_of_query);
+	int i=0;
+	valid_query = false;
+	type_of_query = MONO_SENSOR;
+	left_bound = -1;
+	right_bound = -1;
+	int amount_of_sensors_in_system = target_system->get_amount_of_sensors_in_system();
+	for (i=0 ; i<amount_of_sensors_in_system ; i++)
+	{
+		if ((target_system->get_sensor_in_system_at_index(i))->get_sensor_name() == query_name)
+		{
+			sensors_in_query.push_back(target_system->get_sensor_in_system_at_index(i));
+			break;
+		}
+	}
 }
 
 int Query::get_amount_of_sensors_in_query()
@@ -102,94 +125,25 @@ int Query::get_amount_of_sensors_in_query()
 	return (int)sensors_in_query.size();
 }
 
-string Query::get_sensor_in_query_at_index(const int &index)
+sensor * Query::get_sensor_in_query_at_index(const int &index)
 {
 	return sensors_in_query[index];
 }
 
 void Query::execute_query(ostream & os)
 {
-	int i=0 , j=0 , k=0;
 	_validate_query();
-	int amount_of_sensors_in_query = get_amount_of_sensors_in_query();
-	int amount_of_sensors_in_system = target_system->get_amount_of_sensors_in_system();
 
-	if (valid_query == TRUE)
+	if (valid_query == true)
 	{
-		if (amount_of_sensors_in_query > 1)
-		{
-			type_of_query = MULTI_SENSOR;
-		}
 		if (type_of_query == MONO_SENSOR)
 		{
-			for (i=0 ;  i < amount_of_sensors_in_query ; i++)
-			{
-				for (j=0 ; j < amount_of_sensors_in_system ; j++)
-				{
-					if (sensors_in_query[i] == target_system->get_sensor_in_system_at_index(j))
-					{
-						int amount_of_valid_temperatures = target_system->get_amount_of_valid_temperatures_in_range_at_index(j,left_bound,right_bound);
-						if(amount_of_valid_temperatures > 0)
-						{
-							os<<target_system->get_average_temperature_in_range_of_sensor_at_index(j,left_bound,right_bound)<<","
-							<<target_system->get_min_temperature_in_range_of_sensor_at_index(j,left_bound,right_bound)<<","
-							<<target_system->get_max_temperature_in_range_of_sensor_at_index(j,left_bound,right_bound)<<","
-							<<amount_of_valid_temperatures<<endl;
-						}
-						else	os << MSG_NO_DATA << endl;
-					}
-				}
-			}
-		}else
-		{
-			sensor *aux_sensor = new sensor("aux_sensor");
-			float accum = 0;
-			float aux = 0;
-			size_t valid_meassures = 0;
-
-			for (k = left_bound ; k<right_bound ; k++)
-			{
-				for (i=0 ;  i < amount_of_sensors_in_query ; i++)
-				{
-					for (j=0 ; j < amount_of_sensors_in_system ; j++)
-					{
-						if (sensors_in_query[i] == target_system->get_sensor_in_system_at_index(j))
-						{
-							if((aux = target_system->get_temperature_at_of_sensor_at_index(j,k)) != INVALID_TEMPERATURE)
-							{
-								accum += aux;
-								valid_meassures++;
-							}else
-							{
-
-							}
-						}
-					}
-				}
-				if (valid_meassures == 0)
-				{
-					aux_sensor->add_temperature_to_sensor(-273);
-				}else 
-				{
-					aux_sensor->add_temperature_to_sensor(accum/valid_meassures);
-				}
-				accum = 0;
-				valid_meassures = 0;
-			}
-			int amount_of_valid_temperatures = aux_sensor->get_amount_of_valid_temperatures_in_range(0,aux_sensor->get_amount_of_temperature_measures());
-			if(amount_of_valid_temperatures > 0)
-			{	
-				os<<aux_sensor->get_average_temperature_in_range(0,aux_sensor->get_amount_of_temperature_measures())<<","
-				<<aux_sensor->get_min_temperature_in_range(0,aux_sensor->get_amount_of_temperature_measures())<<","
-				<<aux_sensor->get_max_temperature_in_range(0,aux_sensor->get_amount_of_temperature_measures())<<","
-				<< amount_of_valid_temperatures << endl;
-			}
-			else os << MSG_NO_DATA << endl;
-			delete aux_sensor;
+			leaf aux = sensors_in_query[0]->get_query_from_sensor(left_bound,right_bound);
+			os << aux.min << " " << aux.max << endl;
 		}
 	}else
 	{
-		if (left_bound < 0 || right_bound < 0)
+		if ((left_bound < 0 || right_bound < 0) || (left_bound>= right_bound))
 		{
 			os << MSG_BAD_QUERY << endl;
 		}else
@@ -201,58 +155,33 @@ void Query::execute_query(ostream & os)
 
 void Query::_validate_query()
 {
-	int i=0 , j=0;
-	valid_query = FALSE;
-	int valid_sensors =0;
-	for (i=0 ;  i<get_amount_of_sensors_in_query() ; i++)
+	if ((left_bound < 0 || right_bound < 0) || (left_bound>= right_bound))
 	{
-		if (sensors_in_query[i] == "")
-		{
-			for (j=0 ; j < target_system->get_amount_of_sensors_in_system() ; j++)
-			{
-				(*this).add_sensor_to_query(target_system->get_sensor_in_system_at_index(j));
-			}
-			valid_sensors ++;
-		}else
-		{
-			for (j=0 ; j < target_system->get_amount_of_sensors_in_system() ; j++)
-			{
-				if (sensors_in_query[i] == target_system->get_sensor_in_system_at_index(j))
-				{
-					valid_sensors ++;
-				}
-			}
-		}
-		
-	}
-	if (valid_sensors == get_amount_of_sensors_in_query())
+		valid_query = false;
+	}else
 	{
-		valid_query = TRUE;
+		valid_query = true;
 	}
-	if (left_bound < 0 || right_bound < 0)
-	{
-		valid_query = FALSE;
-	}
+
 }
 
 istream & operator>>(std::istream &in, Query & query)
 {
-   Array<string> v, sensors_to_add;
-   string tmp;
+   	Array<string> v, sensors_to_add;
+   	string tmp;
 
-   getline(in, tmp, '\n');
-   _split(tmp, ',', v);
-   if(v.size() != 3)
-      query.left_bound = query.right_bound = -1;
-   _split(v[0],';',sensors_to_add);
-   for (int i = 0; i < (int) sensors_to_add.size(); ++i)
-   {
-   	query.add_sensor_to_query(sensors_to_add[i]);
-   }
-   query.set_left_bound(v[1]);
-   query.set_right_bound(v[2]);
+   	getline(in, tmp, '\n');
+   	_split(tmp, ',', v);
+   	if(v.size() != 3)
+   	{
+      	query.left_bound = query.right_bound = -1;
+      	query.valid_query = false;
+   	}
+   	query.add_sensor_to_query(v[0]);
+   	query.set_left_bound(v[1]);
+   	query.set_right_bound(v[2]);
 
-   return in;
+   	return in;
 }
 
 #endif

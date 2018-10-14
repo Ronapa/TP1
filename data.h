@@ -9,7 +9,10 @@ class data
 {
 	public:
 		float value;
-		bool valid;
+		bool valid=false;
+
+		bool is_valid();
+		float get_data();
 };
 
 #endif
