@@ -12,6 +12,8 @@
 #define ARRAY_DEFAULT_SIZE 1
 #define ARRAY_GROWTH_RATE 5
 
+using namespace std;
+
 template <typename T>
 class Array
 {
@@ -151,7 +153,7 @@ T & Array<T>::operator [ ]( int pos )
 	// Si no se puede, detiene el programa mandando la señal SIGABRT y dirá 
 	// que fallo acá
 
-	assert( (0 < pos) || (pos < used_size_) ) ; 
+	assert( (0 < pos) || (pos < (int)used_size_) ) ; 
 	return ptr_[ pos ]; 
 }
 
@@ -162,7 +164,7 @@ const T & Array<T>::operator [ ]( int pos ) const
 	// Es necesario si se llama desde dentro de una función que es const
 	// El compilador se dará cuenta de cual usar
 
-	assert( (0 < pos) || (pos < used_size_) ) ; 
+	assert( (0 < pos) || (pos < (int)used_size_) ) ; 
 	return ptr_[ pos ]; 
 }
 

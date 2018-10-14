@@ -136,5 +136,5 @@ leaf Segment_Tree::get_value_from_segment_tree(int index , int q_left , int q_ri
 
 	aux_l = get_value_from_segment_tree(index*2+1,q_left,q_right,sensor,seg_tree);
 	aux_r = get_value_from_segment_tree(index*2+2,q_left,q_right,sensor,seg_tree);
-	return aux_l|aux_r;
+	return aux_l||aux_r;
 }
