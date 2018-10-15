@@ -31,6 +31,8 @@ class System
 		
 		int get_amount_of_sensors_in_system();
 		sensor* get_sensor_in_system_at_index(const int &);
+
+		void create_segment_tree_for_all_sensors();
 		
 		float get_temperature_at_of_sensor_at_index(const int & , const int &);
 		int get_amount_of_valid_temperatures_in_range_at_index(const int & , const int & , const int &);

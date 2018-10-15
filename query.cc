@@ -27,6 +27,7 @@ Query::Query(const string & query_name)
 		if ((target_system->get_sensor_in_system_at_index(i))->get_sensor_name() == query_name)
 		{
 			sensors_in_query.push_back(target_system->get_sensor_in_system_at_index(i));
+			valid_query = true;
 			break;
 		}
 	}	
@@ -44,7 +45,7 @@ Query::~Query()
 
 }
 
-void Query::load_querys_from_csv(istream& in, Array<Query *>& querys) 
+void Query::load_querys_from_csv(istream& in, Array<Query *>& querys , System * target_system) 
 {
    string tmp;
    Array<string> v;
@@ -54,6 +55,7 @@ void Query::load_querys_from_csv(istream& in, Array<Query *>& querys)
    {
       query = new Query();
       stringstream str_st (tmp);
+      query->set_target_system(target_system);
       str_st >> (*query);
       querys.push_back(query);
       tmp.clear();
@@ -115,6 +117,7 @@ void Query::add_sensor_to_query(const string &query_name)
 		if ((target_system->get_sensor_in_system_at_index(i))->get_sensor_name() == query_name)
 		{
 			sensors_in_query.push_back(target_system->get_sensor_in_system_at_index(i));
+			valid_query = true;
 			break;
 		}
 	}
@@ -139,7 +142,11 @@ void Query::execute_query(ostream & os)
 		if (type_of_query == MONO_SENSOR)
 		{
 			leaf aux = sensors_in_query[0]->get_query_from_sensor(left_bound,right_bound);
-			os << aux.min << " " << aux.max << endl;
+			if (aux.valid_measures > 0)
+			{
+				os << aux.min << " " << aux.max << " " << aux.sum/aux.valid_measures << " " << aux.valid_measures << endl;				
+			}
+
 		}
 	}else
 	{
@@ -158,11 +165,7 @@ void Query::_validate_query()
 	if ((left_bound < 0 || right_bound < 0) || (left_bound>= right_bound))
 	{
 		valid_query = false;
-	}else
-	{
-		valid_query = true;
 	}
-
 }
 
 istream & operator>>(std::istream &in, Query & query)

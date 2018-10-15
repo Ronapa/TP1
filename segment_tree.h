@@ -10,11 +10,11 @@ class Segment_Tree
 {
 
 	private:
-		leaf * seg_tree;
+		Array<leaf> * seg_tree;
 		int number_of_values;
 		int l_bound, r_bound;
 
-		void build_Segment_Tree(int , int , int , Array<data> & , Array<leaf> &);	
+		void build_Segment_Tree(int , int , int , Array<data> &);	
 
 
 	public:

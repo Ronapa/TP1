@@ -48,7 +48,7 @@ class Query
 		void execute_query(ostream &);
 
 		friend istream & operator>>(std::istream &in, Query & query);
-		static void load_querys_from_csv(istream& , Array<Query *>& );
+		static void load_querys_from_csv(istream& , Array<Query *>& , System * );
 
 };
 

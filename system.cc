@@ -67,7 +67,7 @@ void System::load_sensors_from_csv(istream &in)
 
 int System::get_amount_of_sensors_in_system()
 {
-	return (int)sensor_array.size();
+	return sensor_array.size();
 }
 
 sensor * System::get_sensor_in_system_at_index(const int &index)
@@ -118,6 +118,15 @@ std::istream & operator>>(std::istream &in, System & system)
       system.sensor_array[i]->add_temperature_to_sensor(measure);
    } 
    return in;
+}
+
+void System::create_segment_tree_for_all_sensors()
+{
+   int i=0;
+   for (i=0 ; i<sensor_array.size() ; i++)
+   {
+      sensor_array[i]->build_segment_tree();
+   }
 }
 
 #endif

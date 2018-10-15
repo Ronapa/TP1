@@ -117,12 +117,12 @@ int main(int argc, char * const argv[])
 	System system;
 
 	system.load_sensors_from_csv(*iss);
+	system.create_segment_tree_for_all_sensors();
 
-	Query::load_querys_from_csv(*qss,query_array);
+	Query::load_querys_from_csv(*qss,query_array,&system);
 
 	for (i=0 ; i<query_array.size() ; i++)
 	{
-		query_array[(size_t)i]->set_target_system(&system);
 		query_array[(size_t)i]->execute_query(*oss);
 	}
 	for (i=0 ; i<query_array.size() ; i++)
