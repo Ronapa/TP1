@@ -33,7 +33,7 @@ void Segment_Tree::build_Segment_Tree(int index, int l_bound, int r_bound, Array
 {
 	int i_left = (index*2+1);
 	int i_right = (index*2+2);
-	//cout << index << " i_left: " << i_left << "  i_right: " << i_right << " l_bound: " << l_bound << " r_bound: " << r_bound << endl;
+	cout << index << " i_left: " << i_left << "  i_right: " << i_right << " l_bound: " << l_bound << " r_bound: " << r_bound << endl;
 	if (l_bound+2 == r_bound)
 	{
 		i_left = (index*2+1) - number_of_values;

@@ -8,8 +8,10 @@ using namespace std;
 class data
 {
 	public:
+		data();
+		~data();
 		float value;
-		bool valid=false;
+		bool valid;
 
 		bool is_valid();
 		float get_data();

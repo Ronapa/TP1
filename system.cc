@@ -104,8 +104,9 @@ std::istream & operator>>(std::istream &in, System & system)
       measure.valid = true;
    }
    system.sensor_array[i]->add_temperature_to_sensor(measure);
-   while( (in >> ch) && (ch == ',') )
+   while( (in >> ch) && ((ch == ',') || (ch == '\n')))
    {  
+      cout << ch << endl;
       i++; 
       if(!(in>>measure.value))
       {
@@ -116,7 +117,8 @@ std::istream & operator>>(std::istream &in, System & system)
          measure.valid = true;
       }
       system.sensor_array[i]->add_temperature_to_sensor(measure);
-   } 
+   }
+   cout << ch << endl; 
    return in;
 }
 

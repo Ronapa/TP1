@@ -78,6 +78,11 @@ int sensor::get_amount_of_valid_temperatures_in_range(const int &left , const in
 
 void sensor::build_segment_tree()
 {
+	int number_of_values = temperature_values.size();
+	for (int i =0 ; i<=number_of_values -1; i++)
+	{
+		cout << temperature_values[i].value << " " <<temperature_values[i].valid << endl;
+	}
 	seg_tree = new Segment_Tree(temperature_values);
 }
 

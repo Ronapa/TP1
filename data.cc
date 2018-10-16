@@ -3,19 +3,27 @@
 #include "data.h"
 
 using namespace std;
-/*
+
 data::data()
 {
+	value = -8;
 	valid = false;
 }
 
 data::~data()
 {
 	
-}*/
+}
 
 bool data::is_valid()
 {
+	if (valid == true)
+	{
+		cout << "true" << endl;
+	}else
+	{
+		cout << "false" << endl;
+	}
 	return valid;
 }
 
