@@ -7,4 +7,13 @@ CPU Package,0,8
 Motherboard,8,37
 CPU Package,0,4
 Motherboard,10,45
-CPU,0,7	
+CPU,0,7
+CPU Package,0,1
+CPU Package,4,401
+Motherboard,530,756
+Motherboard,34,38
+,1,5
+,0,380
+sensor,5,7
+CPU,-2,8
+Motherboard;CPU,34,38	

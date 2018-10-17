@@ -106,8 +106,8 @@ leaf Segment_Tree::get_value_from_segment_tree(int index , int q_left , int q_ri
 			aux.sum = 0;
 			aux.valid_measures = 0;
 		}
-		aux.l_bound = (*seg_tree)[index].l_bound;
-		aux.r_bound = (*seg_tree)[index].r_bound;
+		aux.l_bound = q_left;
+		aux.r_bound = q_right;
 
 		return aux;
 	}

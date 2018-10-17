@@ -121,6 +121,7 @@ std::istream & operator>>(std::istream &in, System & system)
          system.sensor_array[i]->add_temperature_to_sensor(measure);
       }else
       {
+         system.~System();
          cout <<"BAD DATA FILE - FEW DATA" << endl;
          exit(1);
       }
@@ -128,6 +129,7 @@ std::istream & operator>>(std::istream &in, System & system)
    }
    if ((in>>aux) && ((aux != '\n') && (aux != '\r')))
    {
+      system.~System();
       cout << "BAD DATA FILE - MUCH DATA" << endl;
       exit(1);  
    }
