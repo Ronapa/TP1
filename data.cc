@@ -19,10 +19,10 @@ bool data::is_valid()
 {
 	if (valid == true)
 	{
-		cout << "true" << endl;
+		//cout << "true" << endl;
 	}else
 	{
-		cout << "false" << endl;
+		//cout << "false" << endl;
 	}
 	return valid;
 }

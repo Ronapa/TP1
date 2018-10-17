@@ -19,6 +19,7 @@ class System
 
 		Array<sensor *> sensor_array;
 		Array<string> sensor_names;
+		int number_of_sensors;
 
 	public:
 

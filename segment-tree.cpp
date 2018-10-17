@@ -33,7 +33,7 @@ void Segment_Tree::build_Segment_Tree(int index, int l_bound, int r_bound, Array
 {
 	int i_left = (index*2+1);
 	int i_right = (index*2+2);
-	cout << index << " i_left: " << i_left << "  i_right: " << i_right << " l_bound: " << l_bound << " r_bound: " << r_bound << endl;
+	//cout << index << " i_left: " << i_left << "  i_right: " << i_right << " l_bound: " << l_bound << " r_bound: " << r_bound << endl;
 	if (l_bound+2 == r_bound)
 	{
 		i_left = (index*2+1) - number_of_values;
@@ -91,7 +91,7 @@ leaf Segment_Tree::get_value_from_segment_tree(int index , int q_left , int q_ri
 	{
 		leaf aux;
 		int index_bis = index - number_of_values;
-		if(sensor[index_bis].is_valid() == true)
+		if(sensor[index_bis].is_valid() == true && index_bis >= q_left && index_bis <q_right)
 		{
 			float value1 = sensor[index_bis].get_data();
 
@@ -130,5 +130,6 @@ leaf Segment_Tree::get_value_from_segment_tree(int index , int q_left , int q_ri
 
 	aux_l = get_value_from_segment_tree(index*2+1,q_left,q_right,sensor);
 	aux_r = get_value_from_segment_tree(index*2+2,q_left,q_right,sensor);
+	
 	return aux_l||aux_r;
 }

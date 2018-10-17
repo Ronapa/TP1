@@ -45,7 +45,8 @@ void System::load_sensors_from_csv(istream &in)
    {
       getline(in, tmp, '\n');
       _split(tmp, ',', v);
-      for (int i = 0; i < (int)v.size(); ++i)
+      number_of_sensors = (int)v.size();
+      for (int i = 0; i < number_of_sensors; ++i)
       {
          if (i == (int)v.size()-1)
          {
@@ -93,32 +94,43 @@ std::istream & operator>>(std::istream &in, System & system)
 {
    data measure;
    char ch = 0;
+   char aux;
    int i=0;
-   
-   if(!(in>>measure.value))
+   for (i=0 ; i<(system.number_of_sensors) ; i++)
    {
-      measure.value = 99999;
-      measure.valid = false;
-   }else
-   {
-      measure.valid = true;
-   }
-   system.sensor_array[i]->add_temperature_to_sensor(measure);
-   while( (in >> ch) && ((ch == ',') || (ch == '\n')))
-   {  
-      cout << ch << endl;
-      i++; 
-      if(!(in>>measure.value))
+      if ( (in >> aux) && (aux != ','))
+      {
+         in.putback(aux);
+         if(!(in>>measure.value))
+         {
+            measure.value = 99999;
+            measure.valid = false;
+         }else
+         {
+            measure.valid = true;
+         }
+         system.sensor_array[i]->add_temperature_to_sensor(measure);
+         if ((i<(system.number_of_sensors -1)) && ((in >> aux) && (aux == ',')))
+         {
+            continue;
+         }
+      }else if (aux == ',')
       {
          measure.value = 99999;
          measure.valid = false;
+         system.sensor_array[i]->add_temperature_to_sensor(measure);
       }else
       {
-         measure.valid = true;
+         cout <<"BAD DATA FILE - FEW DATA" << endl;
+         exit(1);
       }
-      system.sensor_array[i]->add_temperature_to_sensor(measure);
+
    }
-   cout << ch << endl; 
+   if ((in>>aux) && ((aux != '\n') && (aux != '\r')))
+   {
+      cout << "BAD DATA FILE - MUCH DATA" << endl;
+      exit(1);  
+   }
    return in;
 }
 

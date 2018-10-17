@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <string>
+#include <cmath>
 #include "Array.h"
 #include "sensor.h"
 #include "utilities.h"
@@ -79,9 +80,15 @@ int sensor::get_amount_of_valid_temperatures_in_range(const int &left , const in
 void sensor::build_segment_tree()
 {
 	int number_of_values = temperature_values.size();
-	for (int i =0 ; i<=number_of_values -1; i++)
+	int pow_2 = ceil(log2(number_of_values));
+	int expanded_value = pow(2,pow_2);
+	int i=number_of_values; 
+	data aux;
+	aux.valid = false;
+	while (i<expanded_value)
 	{
-		cout << temperature_values[i].value << " " <<temperature_values[i].valid << endl;
+		temperature_values.push_back(aux);
+		i++;
 	}
 	seg_tree = new Segment_Tree(temperature_values);
 }

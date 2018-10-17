@@ -145,6 +145,9 @@ void Query::execute_query(ostream & os)
 			if (aux.valid_measures > 0)
 			{
 				os << aux.min << " " << aux.max << " " << aux.sum/aux.valid_measures << " " << aux.valid_measures << endl;				
+			}else
+			{
+				os << MSG_NO_DATA << endl;
 			}
 
 		}
