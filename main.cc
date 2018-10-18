@@ -108,17 +108,22 @@ static void opt_help(string const &arg)
 	exit(0);
 }
 
+#define DEBUG
+
 int main(int argc, char * const argv[])
 {
 	Array<Query *> query_array;
 	size_t i=0;
+	clock_t start,mid,end;
 	cmdline cmdl(options);
 	cmdl.parse(argc, argv);
 	System system;
-
+	
+	start = clock();
 	system.load_sensors_from_csv(*iss);
 	system.create_segment_tree_for_all_sensors();
 
+	mid = clock();
 	Query::load_querys_from_csv(*qss,query_array,&system);
 
 	for (i=0 ; i<query_array.size() ; i++)
@@ -129,6 +134,11 @@ int main(int argc, char * const argv[])
 	{
 		delete query_array[i];
 	}
+	end = clock();
+
+	#ifdef DEBUG
+	cout << "TOTAL," << ((double)(end - start))/CLOCKS_PER_SEC << ",LOAD," << ((double)(mid - start))/CLOCKS_PER_SEC << ",QUERY," << ((double)(end - mid))/CLOCKS_PER_SEC << endl;
+	#endif
 	return 0;
 
 }
