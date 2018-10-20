@@ -97,9 +97,8 @@ void Query::set_left_bound(const string & left)
    stringstream str_st(left);
    if(!(str_st>>left_bound) || (left_bound < 0))
       left_bound = -1;
-   //str_st >> aux;
-   //if(aux != '\n' && aux != '\r' && aux != '\0')
-   //  left_bound = -1;
+   if(str_st >> aux)
+   	  left_bound = -1;
 }
 
 void Query::set_right_bound(const string & right)
@@ -109,9 +108,8 @@ void Query::set_right_bound(const string & right)
    stringstream str_st(right);
    if(!(str_st>>right_bound) || (right_bound < 0))
       right_bound = -1;
-   //str_st >> aux;
-   //if(aux != '\n' && aux != '\r' && aux != '\0')
-   //	  right_bound = -1;
+   if(str_st >> aux)
+   	  right_bound = -1;
 }
 
 void Query::add_sensor_to_query(const string &query_name)
@@ -194,6 +192,13 @@ istream & operator>>(std::istream &in, Query & query)
       	query.valid_query = false;
    	}
    	query.add_sensor_to_query(v[0]);
+   	
+   	v[1].append("\n");
+   	v[2].append("\n");
+
+   	//cout<<v[1].size()<<" "<<cout<<v[2].size()<<endl;
+   	//cout<<v[2].size()<<endl;
+
    	query.set_left_bound(v[1]);
    	query.set_right_bound(v[2]);
 
