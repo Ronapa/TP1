@@ -107,8 +107,9 @@ int main (int argc , char* const argv[])
 	cmdline cmdl(options);
 	cmdl.parse(argc, argv);
 	load_sensors_from_csv(*iss,sensor_array);
+	sensor_array.push_back("");
 	int i=0;
-	int cols=sensor_array.size();
+	int cols=sensor_array.size()+1;
 	for (i=0 ; i < rows ; i++)
 	{
 		int aux_s = rand()%cols;

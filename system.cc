@@ -17,7 +17,7 @@ using namespace std;
 
 System::System()
 {
-
+   valid_data = true;
 }
 
 System::~System()
@@ -38,26 +38,27 @@ void System::add_new_sensor_to_system(const string & sensor_name)
 
 void System::load_sensors_from_csv(istream &in)
 {
-   Array<string> v;
+   Array<string> *v;
+   v = new(Array<string>);
    string tmp;
 
    if(!in.eof())
    {
       getline(in, tmp, '\n');
-      _split(tmp, ',', v);
-      number_of_sensors = (int)v.size();
+      _split(tmp, ',', *v);
+      number_of_sensors = (int)(*v).size();
       for (int i = 0; i < number_of_sensors; ++i)
       {
-         if (i == (int)v.size()-1)
+         if (i == (int)(*v).size()-1)
          {
-            v[i].erase(v[i].size()-1);
+            (*v)[i].erase((*v)[i].size()-1);
          }
-         add_new_sensor_to_system(v[i]);
+         add_new_sensor_to_system((*v)[i]);
       }
-      v.clear();
+      delete v;
    }
 
-   while (!in.eof()) 
+   while (!in.eof() && valid_data == true) 
    {
       getline(in, tmp, '\n');
       stringstream str_st (tmp);
@@ -65,7 +66,6 @@ void System::load_sensors_from_csv(istream &in)
       tmp.clear();
    }  
 
-   create_avg_sensor();
 }
 
 int System::get_amount_of_sensors_in_system()
@@ -95,7 +95,6 @@ int System::get_amount_of_valid_temperatures_in_range_at_index(const int & index
 std::istream & operator>>(std::istream &in, System & system)
 {
    data measure;
-   //char ch = 0;
    int i=0;
    char aux;
    float aux_value;
@@ -126,17 +125,13 @@ std::istream & operator>>(std::istream &in, System & system)
          system.sensor_array[i]->add_temperature_to_sensor(measure);
       }else
       {
-         system.~System();
-         cout <<"BAD DATA FILE - FEW DATA" << endl;
-         exit(1);
+         system.set_valid_data(false);
       }
 
    }
    if ((in>>aux) && ((aux != '\n') && (aux != '\r')))
    {
-      system.~System();
-      cout << "BAD DATA FILE - MUCH DATA" << endl;
-      exit(1);  
+      system.set_valid_data(false);
    }
    return in;
 }
@@ -144,6 +139,7 @@ std::istream & operator>>(std::istream &in, System & system)
 void System::create_segment_tree_for_all_sensors()
 {
    int i=0;
+   create_avg_sensor();
    for (i=0 ; i<sensor_array.size() ; i++)
    {
       sensor_array[i]->build_segment_tree();
@@ -152,15 +148,13 @@ void System::create_segment_tree_for_all_sensors()
 
 void System::create_avg_sensor()
 {
-   sensor *aux_sensor = new sensor("");
    float accum = 0;
    data aux_data;
    size_t valid_measures = 0;
    int amount_of_sensors = get_amount_of_sensors_in_system();
    int amount_of_values_in_sensor = sensor_array[0]->get_amount_of_temperature_measures();
 
-   add_new_sensor_to_system(aux_sensor->get_sensor_name());
-
+   add_new_sensor_to_system("");
    for (int j = 0; j < amount_of_values_in_sensor; ++j)
    {  
       for (int i=0; i < amount_of_sensors; i++)
@@ -186,6 +180,16 @@ void System::create_avg_sensor()
       accum = 0;
       valid_measures = 0;
    }
+}
+
+bool System::is_data_valid()
+{
+   return valid_data;
+}
+
+void System::set_valid_data(bool valid)
+{
+   valid_data = valid;
 }
 
 #endif

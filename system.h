@@ -20,6 +20,7 @@ class System
 		Array<sensor *> sensor_array;
 		Array<string> sensor_names;
 		int number_of_sensors;
+		bool valid_data;
 
 	public:
 
@@ -32,6 +33,9 @@ class System
 		
 		int get_amount_of_sensors_in_system();
 		sensor* get_sensor_in_system_at_index(const int &);
+
+		bool is_data_valid();
+		void set_valid_data(bool);
 
 		void create_segment_tree_for_all_sensors();
 		

@@ -13,17 +13,22 @@
 
 sensor::sensor()
 {
-
+	seg_tree = NULL;
 }
 
 sensor::sensor(const string &name)
 {
 	sensor_name = name;
+	seg_tree = NULL;
 }
 
 sensor::~sensor()
 {
-	delete seg_tree;
+	if (seg_tree != NULL)
+	{
+		delete seg_tree;
+	} 
+
 }
 
 string sensor::get_sensor_name()

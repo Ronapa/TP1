@@ -111,8 +111,7 @@ static void opt_help(string const &arg)
 #define DEBUG
 
 int main(int argc, char * const argv[])
-{
-	Array<Query *> query_array;
+{	
 	size_t i=0;
 	clock_t start,mid,end;
 	cmdline cmdl(options);
@@ -121,9 +120,15 @@ int main(int argc, char * const argv[])
 	
 	start = clock();
 	system.load_sensors_from_csv(*iss);
+	if (system.is_data_valid() == false)
+	{
+		*oss << "Bad data file" << endl;
+		return 0;
+	}
 	system.create_segment_tree_for_all_sensors();
 
 	mid = clock();
+	Array<Query *> query_array;
 	Query::load_querys_from_csv(*qss,query_array,&system);
 
 	for (i=0 ; i<query_array.size() ; i++)

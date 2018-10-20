@@ -1,11 +1,19 @@
 CCFLAGS= -Wall -g -pedantic -ansi
 CC= g++ 
 
-all: TP0 clean
+all: TP0 clean 							# TP
 
-data_gen: Data_generator clean
+data_gen: Data_generator clean 			# COMPILAR GENERADOR DE SENSORES
 
-query_gen: Query_generator clean
+query_gen: Query_generator clean 		# COMPILAR GENERADOR DE QUERYS
+
+generate_data: generate_data 			# EJECUTAR GENERADOR DE SENSORES
+
+generate_querys: generate_querys 		# EJECUTAR GENERADOR DE QUERYS
+
+test_data: data 						# PROBAR CASOS DE PRUEBA BAD DATA
+
+test_query: query 						# PROBAR CASOS DE PRUEBA BAD QUERY
 
 bench: Bench
 
@@ -64,5 +72,32 @@ Bench:
 	./TP0 -o out.csv -d data_4_11.csv -i query_4_1.csv
 	./TP0 -o out.csv -d data_4_12.csv -i query_4_2.csv
 #----------------------------------------------------------------------------------------
+
+generate_query:
+	./query_gen -s sensor_names.csv -a 100 -o query_100_100000.csv
+
+generate_data:
+	./data_gen -s sensor_names.csv -a 100 -o data_4_100.csv
+
+
+
+data: 
+	@echo "\n Errores de Contenido\n"
+	./TP0 -d BadDataC1_letra.csv -i query_4_2.csv
+	./TP0 -d BadDataC2_simbolo.csv -i query_4_2.csv
+	./TP0 -d BadDataC3_doblePunto.csv -i query_4_2.csv
+	./TP0 -d BadDataC4_puntoSolo.csv -i query_4_2.csv
+	./TP0 -d BadDataC5_letrayNumero.csv -i query_4_2.csv
+	./TP0 -d BadDataC6_simboloyNumero.csv -i query_4_2.csv
+
+	@echo "\n Errores de Formato\n"
+	./TP0 -d BadDataF1_missingSensor.csv -i query_4_2.csv
+	./TP0 -d BadDataF2_extraData.csv -i query_4_2.csv
+	./TP0 -d BadDataF3_missingData.csv -i query_4_2.csv
+
+query: 
+	./TP0 -d Consultas_CPU_Temp2.csv -i BadQueries.csv
+
+
 clean:
 	$(RM) *.o 
