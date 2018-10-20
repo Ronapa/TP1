@@ -74,7 +74,7 @@ Bench:
 #----------------------------------------------------------------------------------------
 
 generate_query:
-	./query_gen -s sensor_names.csv -a 100 -o query_100_100000.csv
+	./query_gen -s sensor_names.csv -a 100 -r 100 -o query_100_100.csv
 
 generate_data:
 	./data_gen -s sensor_names.csv -a 100 -o data_4_100.csv

@@ -12,12 +12,14 @@ using namespace std;
 static void opt_sensors(string const &arg);
 static void opt_output(string const &arg);
 static void opt_rows(string const &arg);
+static void opt_range(string const &arg);
 static void opt_help(string const &arg);
 void load_sensors_from_csv(istream &in , Array<string> & sensor_array);
 
 static option_t options[] = {
 	{1, "s", "sensors", "-", opt_sensors, OPT_MANDATORY},
 	{1, "a", "amount", "-", opt_rows, OPT_MANDATORY},
+	{1, "r", "range", "-", opt_range, OPT_MANDATORY},
 	{1, "o", "output", "-", opt_output, OPT_DEFAULT},
 	{0, "h", "help", NULL, opt_help, OPT_DEFAULT},
 	{0, },
@@ -25,6 +27,8 @@ static option_t options[] = {
 
 
 static int rows;
+static int range;
+
 static istream *iss = 0;	// Input Stream (clase para manejo de los flujos de entrada)
 static ostream *oss = 0;	// Output Stream (clase para manejo de los flujos de salida)
 static fstream ifs; 		// Input File Stream (derivada de la clase ifstream que deriva de istream para el manejo de archivos)
@@ -82,6 +86,13 @@ static void opt_rows(string const &arg)
    rows  = atoi(arg.c_str());
 }
 
+static void opt_range(string const &arg)
+{
+   //Tomo el argumento y lo convierto a int
+   range  = atoi(arg.c_str());
+}
+
+
 static void opt_help(string const &arg)
 {
 	cout << "cmdline [-s file] [-a entero] [-o file]"
@@ -113,8 +124,8 @@ int main (int argc , char* const argv[])
 	for (i=0 ; i < rows ; i++)
 	{
 		int aux_s = rand()%cols;
-		int aux1 = rand()%1000000;
-		int aux2 = rand()%1000000;
+		int aux1 = rand()%range;
+		int aux2 = rand()%range;
 		if (aux1 <= aux2)
 		{
 			*oss << sensor_array[aux_s] << "," << aux1 << ',' << aux2 << endl;
