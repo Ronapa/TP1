@@ -37,6 +37,7 @@ class System
 		
 		float get_temperature_at_of_sensor_at_index(const int & , const int &);
 		int get_amount_of_valid_temperatures_in_range_at_index(const int & , const int & , const int &);
+		void create_avg_sensor();
 
 		friend std::istream & operator >>(std::istream &, System &);
 

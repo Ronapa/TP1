@@ -31,3 +31,13 @@ float data::get_data()
 {
 	return value;
 }
+
+void data::set_data(const float & new_value)
+{
+	value = new_value;
+}
+		
+void data::set_valid(const bool & new_valid)
+{
+	valid = new_valid;
+}

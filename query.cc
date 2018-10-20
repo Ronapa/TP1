@@ -92,16 +92,26 @@ void Query::set_right_bound(const int & right)
 
 void Query::set_left_bound(const string & left)
 {
+   char aux;
+
    stringstream str_st(left);
    if(!(str_st>>left_bound) || (left_bound < 0))
       left_bound = -1;
+   //str_st >> aux;
+   //if(aux != '\n' && aux != '\r' && aux != '\0')
+   //  left_bound = -1;
 }
 
 void Query::set_right_bound(const string & right)
 {
+   char aux;
+
    stringstream str_st(right);
    if(!(str_st>>right_bound) || (right_bound < 0))
       right_bound = -1;
+   //str_st >> aux;
+   //if(aux != '\n' && aux != '\r' && aux != '\0')
+   //	  right_bound = -1;
 }
 
 void Query::add_sensor_to_query(const string &query_name)

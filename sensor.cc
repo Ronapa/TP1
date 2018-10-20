@@ -51,8 +51,8 @@ data sensor::get_temperature_at(const int &index)
 	data aux;
 	if (index < 0 || (size_t)index >= temperature_values.size())
 	{
-		aux.value = 0;
-		aux.valid = false;
+		aux.set_data(0);
+		aux.set_valid(false);
 		return aux;
 	}
 	return temperature_values[index];
@@ -68,7 +68,7 @@ int sensor::get_amount_of_valid_temperatures_in_range(const int &left , const in
 	}
 	while (i < right && (size_t)i<temperature_values.size())
 	{
-		if(temperature_values[i].valid != false)
+		if(temperature_values[i].is_valid() != false)
 		{
 			aux++;
 		}
@@ -84,7 +84,7 @@ void sensor::build_segment_tree()
 	int expanded_value = pow(2,pow_2);
 	int i=number_of_values; 
 	data aux;
-	aux.valid = false;
+	aux.set_valid(false);
 	while (i<expanded_value)
 	{
 		temperature_values.push_back(aux);

@@ -10,11 +10,15 @@ class data
 	public:
 		data();
 		~data();
-		float value;
-		bool valid;
+		
 
 		bool is_valid();
 		float get_data();
+		void set_data(const float &);
+		void set_valid(const bool &);
+	private:
+		float value;
+		bool valid;
 };
 
 #endif

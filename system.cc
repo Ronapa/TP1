@@ -64,6 +64,8 @@ void System::load_sensors_from_csv(istream &in)
       str_st>>*this;
       tmp.clear();
    }  
+
+   create_avg_sensor();
 }
 
 int System::get_amount_of_sensors_in_system()
@@ -78,7 +80,7 @@ sensor * System::get_sensor_in_system_at_index(const int &index)
 
 float System::get_temperature_at_of_sensor_at_index(const int & index , const int &temp_index)
 {
-	return (sensor_array[index]->get_temperature_at(temp_index)).value;
+	return (sensor_array[index]->get_temperature_at(temp_index)).get_data();
 }
 
 int System::get_amount_of_valid_temperatures_in_range_at_index(const int & index, const int & left, const int &right)
@@ -93,21 +95,24 @@ int System::get_amount_of_valid_temperatures_in_range_at_index(const int & index
 std::istream & operator>>(std::istream &in, System & system)
 {
    data measure;
-   char ch = 0;
-   char aux;
+   //char ch = 0;
    int i=0;
+   char aux;
+   float aux_value;
+
    for (i=0 ; i<(system.number_of_sensors) ; i++)
    {
       if ( (in >> aux) && (aux != ','))
       {
          in.putback(aux);
-         if(!(in>>measure.value))
+         if(!(in>>aux_value))
          {
-            measure.value = 99999;
-            measure.valid = false;
+            measure.set_data(99999);
+            measure.set_valid(false);
          }else
          {
-            measure.valid = true;
+            measure.set_data(aux_value);
+            measure.set_valid(true);
          }
          system.sensor_array[i]->add_temperature_to_sensor(measure);
          if ((i<(system.number_of_sensors -1)) && ((in >> aux) && (aux == ',')))
@@ -116,8 +121,8 @@ std::istream & operator>>(std::istream &in, System & system)
          }
       }else if (aux == ',')
       {
-         measure.value = 99999;
-         measure.valid = false;
+         measure.set_data(99999);
+         measure.set_valid(false);
          system.sensor_array[i]->add_temperature_to_sensor(measure);
       }else
       {
@@ -142,6 +147,44 @@ void System::create_segment_tree_for_all_sensors()
    for (i=0 ; i<sensor_array.size() ; i++)
    {
       sensor_array[i]->build_segment_tree();
+   }
+}
+
+void System::create_avg_sensor()
+{
+   sensor *aux_sensor = new sensor("");
+   float accum = 0;
+   data aux_data;
+   size_t valid_measures = 0;
+   int amount_of_sensors = get_amount_of_sensors_in_system();
+   int amount_of_values_in_sensor = sensor_array[0]->get_amount_of_temperature_measures();
+
+   add_new_sensor_to_system(aux_sensor->get_sensor_name());
+
+   for (int j = 0; j < amount_of_values_in_sensor; ++j)
+   {  
+      for (int i=0; i < amount_of_sensors; i++)
+      {
+         aux_data = sensor_array[i]->get_temperature_at(j);
+         if(aux_data.is_valid() == true)
+         {
+            accum += aux_data.get_data();
+            valid_measures++;
+         }
+      }
+      if(valid_measures == 0)
+      {
+         aux_data.set_valid(false);
+      }
+      else
+      {
+         aux_data.set_data(accum/valid_measures);
+         aux_data.set_valid(true);
+      }
+      sensor_array[amount_of_sensors]->add_temperature_to_sensor(aux_data);
+
+      accum = 0;
+      valid_measures = 0;
    }
 }
 
