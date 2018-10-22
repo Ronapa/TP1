@@ -51,14 +51,21 @@ void Query::load_querys_from_csv(istream& in, Array<Query *>& querys , System * 
    Array<string> v;
    Query * query;
 
-   while(getline(in, tmp, '\n'))
+   while(getline(in, tmp))
    {
-      query = new Query();
-      stringstream str_st (tmp);
-      query->set_target_system(target_system);
-      str_st >> (*query);
-      querys.push_back(query);
-      tmp.clear();
+   		if(tmp[tmp.length()-1] == '\r')
+   		{
+				tmp.resize(tmp.length()-1);
+   		}
+      	if(_all_blanks_and_tabs(tmp) == false && !tmp.empty())
+      	{
+      		query = new Query();
+      		stringstream str_st (tmp);
+      		query->set_target_system(target_system);
+      		str_st >> (*query);
+      		querys.push_back(query);
+      		tmp.clear();
+      	}
    }
 }
 
@@ -96,9 +103,9 @@ void Query::set_left_bound(const string & left)
 
    stringstream str_st(left);
    if(!(str_st>>left_bound) || (left_bound < 0))
-      left_bound = -1;
+      left_bound = -2;
    if(str_st >> aux)
-   	  left_bound = -1;
+   	  left_bound = -2;
 }
 
 void Query::set_right_bound(const string & right)
@@ -161,10 +168,15 @@ void Query::execute_query(ostream & os)
 		}
 	}else
 	{
-		if ((left_bound < 0 || right_bound < 0) || (left_bound>= right_bound))
+		if(left_bound >= right_bound)
+		{
+			os << MSG_NO_DATA << endl;
+		}
+		else if ((left_bound < 0 || right_bound < 0))
 		{
 			os << MSG_BAD_QUERY << endl;
-		}else
+		}
+		else
 		{
 			os << MSG_UNKNOWN_ID << endl;
 		}
@@ -173,7 +185,7 @@ void Query::execute_query(ostream & os)
 
 void Query::_validate_query()
 {
-	if ((left_bound < 0 || right_bound < 0) || (left_bound>= right_bound))
+	if ((left_bound < 0 || right_bound < 0) || (left_bound >= right_bound))
 	{
 		valid_query = false;
 	}
@@ -184,25 +196,60 @@ istream & operator>>(std::istream &in, Query & query)
    	Array<string> v, sensors_to_add;
    	string tmp;
 
-   	getline(in, tmp, '\n');
+   	getline(in, tmp);
    	_split(tmp, ',', v);
-   	if(v.size() != 3)
-   	{
-      	query.left_bound = query.right_bound = -1;
-      	query.valid_query = false;
-   	}
-   	query.add_sensor_to_query(v[0]);
+   	int size = v.size();
    	
-   	v[1].append("\n");
-   	v[2].append("\n");
+   	if(size < 3){
+      	query.left_bound = -2;
+      	query.right_bound = -1;
+   	}
+   	else{
+   		bool blanks = false;
 
-   	//cout<<v[1].size()<<" "<<cout<<v[2].size()<<endl;
-   	//cout<<v[2].size()<<endl;
-
-   	query.set_left_bound(v[1]);
-   	query.set_right_bound(v[2]);
-
+   		for(int i = 3; i < size && blanks == false; i++)
+   			if(_all_blanks_and_tabs(v[i]) == true)
+   				blanks = true;
+   		if(blanks == true)
+   			query.left_bound = query.right_bound = 0;
+   		else
+   		{
+   			query.add_sensor_to_query(v[0]);
+   			_right_trim(v[1]);
+   			_right_trim(v[2]);
+   			query.set_bounds(v[1],v[2]);
+   		}
+   	}
    	return in;
 }
-
+void Query::set_bounds(const string & left, const string & right)
+{
+	float l, r;
+	char aux;
+	
+	stringstream str_stl(left);
+	stringstream str_str(right);
+	if(!(str_stl>>l) || !(str_str>>r) || str_stl>>aux || str_str>>aux)
+	{
+		left_bound = -2;
+		right_bound = -1;
+	}
+	else if(l > r)
+	{
+		left_bound = right_bound = -1;
+	}
+	else if(l!=(int)l || r!=(int)r)
+	{
+		left_bound = -2;
+		right_bound = -1;
+	}
+	else
+	{
+		left_bound = l;
+		right_bound = r;
+	}
+    if(left.length() == 0 && right.length() == 0){
+      	left_bound = right_bound = 0;
+    }
+}
 #endif

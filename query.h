@@ -36,6 +36,7 @@ class Query
 		void set_right_bound(const int &);
 		void set_left_bound(const string &);
 		void set_right_bound(const string &);
+		void set_bounds(const string &, const string &);
 		void set_target_system(System *);
 
 		void add_sensor_to_query(const string &);
