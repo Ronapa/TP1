@@ -2,7 +2,7 @@
 #include <string>
 #include "Array.h"
 
-
+//Divide una linea csv con delimitador c en un arreglo de strings
 void _split(const string& s, const char c , Array<string>& v) 
 {
     int i = 0;
@@ -23,6 +23,7 @@ void _split(const string& s, const char c , Array<string>& v)
     }
 }
 
+//Elimina espacios y tabs desde el extremo derecho
 void _right_trim(string & str)
 {
   int len = str.length()-1;
@@ -33,6 +34,7 @@ void _right_trim(string & str)
   }
 }
 
+//Se fija si la string sólo tiene espacios y tabs
 bool _all_blanks_and_tabs(const string & str)
 {
   int len = str.length();

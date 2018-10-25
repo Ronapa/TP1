@@ -24,7 +24,7 @@ leaf::~leaf()
 
 }
 
-
+//Combina los nodos
 leaf leaf::operator||(leaf & right)
 {
 	leaf aux;

@@ -32,10 +32,6 @@ class Query
 		Query(const string &);
 		~Query();
 
-		void set_left_bound(const int &);
-		void set_right_bound(const int &);
-		void set_left_bound(const string &);
-		void set_right_bound(const string &);
 		void set_bounds(const string &, const string &);
 		void set_target_system(System *);
 
